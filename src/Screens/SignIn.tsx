@@ -16,14 +16,16 @@ export function SignIn() {
       position="absolute"
       />
 
-      <Center my={24}>
+      <Center mt={24} mb='160'>
         <LogoSvg/>
         <Text fontFamily="body" fontSize="sm" color="gray.100">Your mind and body in shape</Text>
       </Center>
 
       <Center px={7}>
 
-        <Heading fontFamily='heading' color='gray.100' mb={4.}>Login into your account</Heading>
+        <Heading fontFamily='heading' color='gray.100' mb={4.}>
+          Login into your account
+        </Heading>
 
         <Input 
         placeholder='E-mail'
@@ -36,7 +38,12 @@ export function SignIn() {
         autoCapitalize='none'
         secureTextEntry
         />
-        <SubmitButton name='Login'/>
+        <SubmitButton name='Login' mb="112"/>
+
+        <Text mb="3" fontFamily='body' color='gray.100' fontSize='md'>
+          Not registered yet ?
+        </Text>
+        <SubmitButton variant="outline" name='Register'/>
       </Center>
 
     </VStack>
