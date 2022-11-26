@@ -14,7 +14,7 @@
         "./src/components/*"
       ],
       "@screens/*": [
-        "./src/screens/*"
+        "src/screens/*"
       ],
       "@storage/*": [
         "./src/storage/*"
