@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native'
 import {VStack, Image, Center, Text, Heading, ScrollView} from 'native-base'
 
 
@@ -7,11 +8,19 @@ import { Input } from '@components/Input'
 import { SubmitButton } from '@components/SubmitButton'
 
 export function SignUp() {
+
+  const navigation = useNavigation()
+
+  function handleGoBack() {
+    navigation.goBack()
+  }
+
   return(
     <ScrollView contentContainerStyle={{ flexGrow: 1}} showsVerticalScrollIndicator={false}>
       <VStack flex={1} bg="gray.700">
         <Image 
         source={BackgroundImg}
+        defaultSource={BackgroundImg}
         alt="People Training"
         resizeMode="contain"
         position="absolute"
@@ -52,7 +61,7 @@ export function SignUp() {
           />
           <SubmitButton name='Register and Enter' mt={4} mb="78"/>
 
-          <SubmitButton variant="outline" name='Go back to login'/>
+          <SubmitButton variant="outline" name='Go back to login' onPress={handleGoBack}/>
         </Center>
 
       </VStack>
