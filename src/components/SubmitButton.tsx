@@ -2,9 +2,12 @@ import {Button, Text, IButtonProps} from 'native-base'
 
 type Props = IButtonProps & {
   name: string;
+  variant?: 'outline' | 'solid'
 }
 
-export function SubmitButton({name, variant, ...rest} : Props) {
+
+//tipando quais variantes eu estou usando, dizendo que não é obrigatório passar variante, quando não passar vai ser a solid
+export function SubmitButton({name, variant = 'solid', ...rest} : Props) {
   return(
     <Button
     bg={variant === 'outline' ? 'transparent' : 'green.700'}
@@ -13,7 +16,7 @@ export function SubmitButton({name, variant, ...rest} : Props) {
     width='100%'
     height={14}
     _pressed={{
-      bg: 'green.500'
+      bg: variant === 'outline' ? 'gray.500' : 'green.500'
     }}
     {...rest}
     >

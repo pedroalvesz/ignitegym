@@ -8,7 +8,7 @@ import {
 
 import { Loading } from '@components/Loading';
 import { theme } from './styles/theme';
-import { SignIn } from '@screens/SignIn';
+import { SignUp } from '@screens/SignUp';
 
 export default function App() {
 
@@ -20,7 +20,7 @@ export default function App() {
       barStyle={'light-content'}
       translucent
       />
-      {fontsLoaded ? <SignIn/> : <Loading/>}
+      {fontsLoaded ? <SignUp/> : <Loading/>}
     </NativeBaseProvider>
   );
 }

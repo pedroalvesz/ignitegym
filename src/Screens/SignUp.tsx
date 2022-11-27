@@ -6,7 +6,7 @@ import LogoSvg from '@assets/logo.svg'
 import { Input } from '@components/Input'
 import { SubmitButton } from '@components/SubmitButton'
 
-export function SignIn() {
+export function SignUp() {
   return(
     <ScrollView contentContainerStyle={{ flexGrow: 1}} showsVerticalScrollIndicator={false}>
       <VStack flex={1} bg="gray.700">
@@ -17,34 +17,42 @@ export function SignIn() {
         position="absolute"
         />
 
-        <Center mt={24} mb='160'>
+        <Center mt={24} mb='90px'>
           <LogoSvg/>
           <Text fontFamily="body" fontSize="sm" color="gray.100">Your mind and body in shape</Text>
         </Center>
 
         <Center px={7}>
 
-          <Heading fontFamily='heading' color='gray.100' mb={4.}>
-            Login into your account
+          <Heading fontFamily='heading' color='gray.100' mb={4}>
+            Register your account
           </Heading>
 
+          <Input 
+          placeholder='Username'
+          autoCapitalize='none'
+          />
+          
           <Input 
           placeholder='E-mail'
           keyboardType='email-address'
           autoCapitalize='none'
-
           />
-          <Input
+
+          <Input 
           placeholder='Password'
           autoCapitalize='none'
           secureTextEntry
           />
-          <SubmitButton name='Login' mb="112"/>
 
-          <Text mb="3" fontFamily='body' color='gray.100' fontSize='md'>
-            Not registered yet ?
-          </Text>
-          <SubmitButton variant="outline" name='Register'/>
+          <Input
+          placeholder='Confirm password'
+          autoCapitalize='none'
+          secureTextEntry
+          />
+          <SubmitButton name='Register and Enter' mt={4} mb="78"/>
+
+          <SubmitButton variant="outline" name='Go back to login'/>
         </Center>
 
       </VStack>
