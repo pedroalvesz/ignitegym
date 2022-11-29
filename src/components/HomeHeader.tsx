@@ -1,4 +1,4 @@
-import { HStack, Icon, IconButton, Image, Text, VStack } from 'native-base'
+import { Heading, HStack, Icon, IconButton, Image, Text, VStack } from 'native-base'
 import {MaterialIcons} from '@expo/vector-icons'
 import { UserPhoto } from './UserPhoto'
 
@@ -15,9 +15,9 @@ export function HomeHeader() {
         />
 
         <VStack ml={4}>
-          <Text fontFamily='body' fontSize='md' color='gray.100'>
+          <Heading fontFamily='body' fontSize='md' color='gray.100'>
             Hello,
-          </Text>
+          </Heading>
           <Text fontFamily='heading' fontSize='md' color='gray.100'>
             pedroPokas
           </Text>
