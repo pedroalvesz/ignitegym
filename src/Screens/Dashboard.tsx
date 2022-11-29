@@ -4,11 +4,14 @@ import {Center, FlatList, Heading, HStack, Text, VStack} from 'native-base';
 
 import { Group } from '@components/Group';
 import { HomeHeader } from '@components/HomeHeader';
+import { ExerciseCard } from '@components/ExerciseCard';
 
 export function Dashboard() {
 
   const [groups, setGroups] = useState(['Chest', 'Back', 'Biceps', 'Triceps', 'Shoulders', 'Legs']);
-  const [selectedGroup, setSelectedGroup] = useState('');
+  const [selectedGroup, setSelectedGroup] = useState('Chest');
+
+  const [exercises, setExercises] = useState(['Pull Down', 'Deadlift', 'Lat-Pull Dowm', 'Pull Up'])
 
   return(
     <VStack flex={1}>
@@ -39,11 +42,19 @@ export function Dashboard() {
           Exercises
         </Heading>
         <Text fontFamily='body' fontSize='sm' color='gray.200'>
-          {groups.length}
+          {exercises.length}
         </Text>
       </HStack>
 
-      
+      <FlatList
+      data={exercises}
+      keyExtractor={item => item}
+      renderItem={({item}) => <ExerciseCard name={item} />}
+      showsVerticalScrollIndicator={false}
+      _contentContainerStyle={{ paddingBottom: 20 }}
+      mt={3}
+      />
+
       </VStack>
     </VStack>
   )
