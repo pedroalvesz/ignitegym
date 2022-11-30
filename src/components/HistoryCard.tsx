@@ -10,7 +10,7 @@ export function HistoryCard() {
     justifyContent='space-between'
     alignItems='center'
     rounded='lg'
-    mt={10}
+    mb={3}
     >
 
       <VStack>
