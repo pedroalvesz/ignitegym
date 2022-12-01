@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import {Center, FlatList, Heading, HStack, Text, VStack} from 'native-base';
-
+import { FlatList, Heading, HStack, Text, VStack } from 'native-base';
+import { useNavigation } from '@react-navigation/native'
 
 import { Group } from '@components/Group';
 import { HomeHeader } from '@components/HomeHeader';
 import { ExerciseCard } from '@components/ExerciseCard';
+
+import { AppRoutesNavigationProps } from '@routes/app.routes';
 
 export function Dashboard() {
 
@@ -12,6 +14,12 @@ export function Dashboard() {
   const [selectedGroup, setSelectedGroup] = useState('Chest');
 
   const [exercises, setExercises] = useState(['Pull Down', 'Deadlift', 'Lat-Pull Dowm', 'Pull Up'])
+
+  const { navigate } = useNavigation<AppRoutesNavigationProps>()
+
+  function handleShowExerciseDetail() {
+    navigate('exercise')
+  }
 
   return(
     <VStack flex={1}>
@@ -49,7 +57,7 @@ export function Dashboard() {
       <FlatList
       data={exercises}
       keyExtractor={item => item}
-      renderItem={({item}) => <ExerciseCard name={item} />}
+      renderItem={({item}) => <ExerciseCard name={item} onPress={handleShowExerciseDetail} />}
       showsVerticalScrollIndicator={false}
       _contentContainerStyle={{ paddingBottom: 20 }}
       mt={3}

@@ -26,7 +26,7 @@ export function AppRoutes() {
 
   const {sizes, colors} = useTheme()
 
-  const iconSize = sizes[8]
+  const ICON_SIZE = sizes[8]
 
   return(
     <Navigator
@@ -44,9 +44,9 @@ export function AppRoutes() {
       }
     }}
     >
-      <Screen name="dashboard" component={Dashboard} options={{tabBarIcon : ({ color }) => <HomeSvg fill={color} height={iconSize} width={iconSize} />}}/>
-      <Screen name="history" component={History} options={{tabBarIcon: ({color}) => <HistorySvg fill={color} height={iconSize} width={iconSize} />}}/>
-      <Screen name="profile" component={Profile} options={{tabBarIcon : ({color}) => <ProfileSvg fill={color} height={iconSize} width={iconSize} /> }}/>
+      <Screen name="dashboard" component={Dashboard} options={{tabBarIcon : ({ color }) => <HomeSvg fill={color} height={ICON_SIZE} width={ICON_SIZE} />}}/>
+      <Screen name="history" component={History} options={{tabBarIcon: ({ color }) => <HistorySvg fill={color} height={ICON_SIZE} width={ICON_SIZE} />}}/>
+      <Screen name="profile" component={Profile} options={{tabBarIcon : ({ color }) => <ProfileSvg fill={color} height={ICON_SIZE} width={ICON_SIZE} /> }}/>
       <Screen name="exercise" component={Exercise} options={{tabBarButton: () => null}}/>
     </Navigator>
   )

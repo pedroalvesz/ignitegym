@@ -1,16 +1,16 @@
 import { Heading, HStack, Icon, Image, Text, VStack } from 'native-base'
 
 import { AntDesign } from '@expo/vector-icons'
-import { TouchableOpacity } from 'react-native'
+import { TouchableOpacity, TouchableOpacityProps } from 'react-native'
 
 
-type CardProps = {
+type CardProps = TouchableOpacityProps & {
   name: string;
 }
 
-export function ExerciseCard({name} : CardProps) {
+export function ExerciseCard({name, ...rest} : CardProps) {
   return(
-    <TouchableOpacity>
+    <TouchableOpacity {...rest}>
       <HStack
       bg='gray.600'
       p={2}

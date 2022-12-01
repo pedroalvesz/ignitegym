@@ -1,9 +1,10 @@
-import {Center, Text} from 'native-base'
+import { ExerciseHeader } from '@components/ExerciseHeader'
+import {Center, Text, VStack} from 'native-base'
 
 export function Exercise() {
   return(
-    <Center flex={1}>
-      <Text>Exercise</Text>
-    </Center>
+    <VStack flex={1}>
+      <ExerciseHeader/>
+    </VStack>
   )
 }
