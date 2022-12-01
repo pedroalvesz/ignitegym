@@ -40,6 +40,7 @@ export function Dashboard() {
       showsHorizontalScrollIndicator={false}
       _contentContainerStyle={{px: 8}}
       my={10}
+      minH={12}
       maxH={12}
       />
 

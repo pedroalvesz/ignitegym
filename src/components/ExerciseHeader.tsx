@@ -1,14 +1,16 @@
 import { Heading, HStack, Icon, Text, VStack } from 'native-base'
-import { TouchableOpacity } from 'react-native'
+import { TouchableOpacity, TouchableOpacityProps} from 'react-native'
 
 import { Feather } from '@expo/vector-icons'
 
 import BodySvg from '@assets/body.svg'
 
-export function ExerciseHeader() {
+
+
+export function ExerciseHeader({...rest} : TouchableOpacityProps) {
   return(
-    <VStack bg='gray.600' h='148px' px={8} pt={12}>
-        <TouchableOpacity>
+    <VStack bg='gray.600' h='148px' px={8} pt={50}>
+        <TouchableOpacity {...rest}>
           <Icon
           as={Feather}
           name='arrow-left'
@@ -29,7 +31,7 @@ export function ExerciseHeader() {
               Back
             </Text>
           </HStack>
-          
+
         </HStack>
     </VStack>
   )
