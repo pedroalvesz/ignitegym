@@ -28,7 +28,7 @@ export function History() {
           <HistoryCard/>
         )}
 
-        renderSectionHeader={({section}) => (
+        renderSectionHeader={({ section }) => (
           <Heading fontFamily='heading' fontSize='md' color='gray.200' mt={10} mb={3} >
             {section.title}
           </Heading>
@@ -42,6 +42,7 @@ export function History() {
             Let's get our body and mind in shape?
           </Text>
         )}
+        showsVerticalScrollIndicator={false}
         />
       </VStack>
     </VStack>

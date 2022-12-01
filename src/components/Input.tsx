@@ -5,7 +5,7 @@ import {Input as NativeBaseInput, IInputProps} from 'native-base'
 export function Input({...rest} : IInputProps) {
 return(
   <NativeBaseInput
-  backgroundColor="gray.900"
+  bg="gray.700"
   color="white"
   width="100%"
   height="14"
