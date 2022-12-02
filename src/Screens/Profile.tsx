@@ -1,19 +1,70 @@
 import { useState } from 'react';
-import { Center, Heading, ScrollView, Skeleton, Text, VStack } from 'native-base';
+import { TouchableOpacity, Alert } from 'react-native';
+import { Center, Heading, ScrollView, Skeleton, Text, Toast, useToast, VStack } from 'native-base';
 
 import { Input } from '@components/Input';
 import { ScreenHeader } from '@components/ScreenHeader';
 import { SubmitButton } from '@components/SubmitButton';
 import { UserPhoto } from '@components/UserPhoto';
-import { TouchableOpacity } from 'react-native';
 
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 
+// Estou importando todo da lib em um lugar só (ImagePicker)
+// Facilita o entendimento / manutenção do código já que antes das funcões de cada lib nos dizemos de qual lib é : ImagePicker.função da lib
 
 const PHOTO_SIZE = 33;
 
 export function Profile() {
 
-  const [photoisLoading, setPhotoIsLoading] = useState(false)
+  const [photoisLoading, setPhotoIsLoading] = useState(false);
+
+  const [userPhoto, setUserPhoto] = useState('https://github.com/pedroalvesz.png');
+
+  const toast = useToast()
+
+
+  async function handleSelectUserPhoto() {
+    //Tentar reduzir esses if
+    setPhotoIsLoading(true)
+
+    try{
+      const PhotoSelected = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+        aspect: [4 , 4], //Aspecto da imagem / 4 por 4
+        allowsEditing: true, //Habilitar edição nativa
+      });
+  
+      if(PhotoSelected.canceled) {
+        return;
+      }
+      
+      if(PhotoSelected.assets[0].uri) {
+
+        const photoInfo = await FileSystem.getInfoAsync(PhotoSelected.assets[0].uri);
+
+        if(photoInfo.size && (photoInfo.size / 1024 / 1024) > 5 ) {
+          return toast.show({
+            title: 'Your image is too large. Please choose smaller than 5MB.',
+            placement: 'top',
+            bg: 'red.500',
+            mx: 4,
+            _title: {
+              textAlign: 'center',
+            },
+          })
+        }
+
+        setUserPhoto(PhotoSelected.assets[0].uri);
+      }
+
+    } catch(error) {
+      console.log(error);
+    } finally {
+      setPhotoIsLoading(false);
+    }
+  }
 
   return(
     <VStack flex={1}>
@@ -27,19 +78,19 @@ export function Profile() {
           h={PHOTO_SIZE}
           rounded='full'
           startColor='gray.300'
-          endColor='gray.600'
+          endColor='gray.500'
           borderWidth={2}
           borderColor='gray.500'
           />
           :
           <UserPhoto
-          image='https://avatars.githubusercontent.com/u/79289930?v=4'
+          image={userPhoto}
           size={PHOTO_SIZE}
           alt='Profile Screen User Photo'
           />
           }
           
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleSelectUserPhoto}>
               <Heading fontFamily='heading' fontSize='md' color='green.500' mt={2} mb={8}>
               Change Photo
               </Heading>
