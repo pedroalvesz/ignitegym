@@ -46,7 +46,7 @@ export function Profile() {
 
         if(photoInfo.size && (photoInfo.size / 1024 / 1024) > 5 ) {
           return toast.show({
-            title: 'Your image is too large. Please choose smaller than 5MB.',
+            title: 'Your image is too large. Please choose one smaller than 5MB.',
             placement: 'top',
             bg: 'red.500',
             mx: 4,
