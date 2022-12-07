@@ -8,6 +8,8 @@ import { ExerciseCard } from '@components/ExerciseCard';
 
 import { AppRoutesNavigationProps } from '@routes/app.routes';
 
+
+
 export function Dashboard() {
 
   const [groups, setGroups] = useState(['Chest', 'Back', 'Biceps', 'Triceps', 'Shoulders', 'Legs']);
