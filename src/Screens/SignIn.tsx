@@ -1,24 +1,48 @@
-import {useNavigation} from '@react-navigation/native'
 import {VStack, Image, Center, Text, Heading, ScrollView} from 'native-base'
+import { useNavigation } from '@react-navigation/native'
+import { useForm, Controller } from 'react-hook-form' 
 
-
-import { AuthRoutesNavigationProps } from '@routes/auth.routes'
+import { SubmitButton } from '@components/SubmitButton'
+import { Input } from '@components/Input'
 import BackgroundImg from '@assets/background.png'
 import LogoSvg from '@assets/logo.svg'
-import { Input } from '@components/Input'
-import { SubmitButton } from '@components/SubmitButton'
+
+import { AuthRoutesNavigationProps } from '@routes/auth.routes'
+
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+
+
+type SignInProps = {
+  email: string;
+  password: string;
+}
+
+const SignInSchema = yup.object({
+  email: yup.string().required('Insert your Email').email('Invalid Email.'),
+  password: yup.string().required('Insert your password')
+})
+
+
 
 export function SignIn() {
 
   const navigation = useNavigation<AuthRoutesNavigationProps>()
+  const { control, handleSubmit, formState: {errors} } = useForm<SignInProps>({
+    resolver: yupResolver(SignInSchema)
+  })
 
   function handleNewAccount() {
     navigation.navigate('signUp')
   }
 
+  function handleSignIn(data: SignInProps) {
+    console.log(data)
+  }
+
   return(
     <ScrollView contentContainerStyle={{ flexGrow: 1}} showsVerticalScrollIndicator={false}>
-      <VStack flex={1} bg="gray.700">
+      <VStack flex={1} bg="gray.700" pb={16}>
         <Image 
         source={BackgroundImg}
         defaultSource={BackgroundImg}
@@ -38,18 +62,39 @@ export function SignIn() {
             Login into your account
           </Heading>
 
-          <Input 
-          placeholder='E-mail'
-          keyboardType='email-address'
-          autoCapitalize='none'
+          <Controller
+          name='email'
+          control={control}
+          render={({ field : {onChange, value}}) => (
+            <Input 
+            placeholder='E-mail'
+            keyboardType='email-address'
+            autoCapitalize='none'
+            onChangeText={onChange}
+            value={value}
+            errorMessage={errors.email?.message}
+            />
+          )}
+          />
 
+
+          <Controller
+          name='password'
+          control={control}
+          render={({ field : { onChange, value }}) => (
+            <Input
+            placeholder='Password'
+            autoCapitalize='none'
+            secureTextEntry
+            onChangeText={onChange}
+            value={value}
+            errorMessage={errors.password?.message}
+            />
+          )}
           />
-          <Input
-          placeholder='Password'
-          autoCapitalize='none'
-          secureTextEntry
-          />
-          <SubmitButton name='Login' mb="112"/>
+          
+          
+          <SubmitButton name='Login' mb="112" onPress={handleSubmit(handleSignIn)}/>
 
           <Text mb="3" fontFamily='body' color='gray.100' fontSize='md'>
             Not registered yet ?

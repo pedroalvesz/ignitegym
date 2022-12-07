@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { TouchableOpacity, Alert } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { Center, Heading, ScrollView, Skeleton, Text, Toast, useToast, VStack } from 'native-base';
+import { useForm, Controller} from 'react-hook-form'
 
 import { Input } from '@components/Input';
 import { ScreenHeader } from '@components/ScreenHeader';
@@ -13,6 +14,23 @@ import * as FileSystem from 'expo-file-system';
 // Estou importando todo da lib em um lugar só (ImagePicker)
 // Facilita o entendimento / manutenção do código já que antes das funcões de cada lib nos dizemos de qual lib é : ImagePicker.função da lib
 
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+type ProfileProps = {
+  username: string,
+  current_password: string,
+  new_password: string,
+  confirm_new_password: string,
+}
+
+const ProfileSchema = yup.object({
+  username: yup.string().required('Insert your new Username.'),
+  current_password: yup.string().required('Insert your current password.'),
+  new_password: yup.string().required('Insert a new password.'),
+  confirm_new_password: yup.string().required('Confirm your new password.'),
+})
+
 const PHOTO_SIZE = 33;
 
 export function Profile() {
@@ -23,6 +41,13 @@ export function Profile() {
 
   const toast = useToast()
 
+  const {control, handleSubmit, formState: { errors }} = useForm<ProfileProps>({
+    resolver: yupResolver(ProfileSchema)
+  })
+
+  function handleChangeInfo(data : ProfileProps) {
+    console.log(data)
+  }
 
   async function handleSelectUserPhoto() {
     //Tentar reduzir esses if
@@ -66,10 +91,12 @@ export function Profile() {
     }
   }
 
+
+
   return(
     <VStack flex={1}>
       <ScreenHeader name='Profile'/>
-        <ScrollView contentContainerStyle={{ paddingBottom: 36}} flex={1} px={8} mt={6}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 36}} flex={1} px={8} pt={6}>
           <Center>
           {photoisLoading
           ?
@@ -96,12 +123,21 @@ export function Profile() {
               </Heading>
             </TouchableOpacity>
 
-            <Input
-            placeholder='Name'
-            placeholderTextColor='gray.200'
-            bg='gray.600'
+            <Controller
+            control={control}
+            name='username'
+            render={({field: { onChange, value }}) => (
+              <Input
+              placeholder='Name'
+              placeholderTextColor='gray.200'
+              bg='gray.600'
+              onChangeText={onChange}
+              value={value}
+              errorMessage={errors.username?.message}
+              />
+            )}
             />
-
+            
             <Input
             placeholder='E-mail'
             bg='gray.600'
@@ -112,25 +148,55 @@ export function Profile() {
               <Text fontFamily='heading' fontSize='md' color='gray.200' mb={2}>
                 Change Password
               </Text>
+              
+              <Controller
+              control={control}
+              name='current_password'
+              render={({ field: {onChange, value}}) => (
+                <Input
+                placeholder='Current password'
+                bg='gray.600'
+                secureTextEntry
+                onChangeText={onChange}
+                value={value}
+                errorMessage={errors.current_password?.message}
+                />
+              )}
+              />
 
-              <Input
-              placeholder='Current password'
-              bg='gray.600'
-              secureTextEntry
+              <Controller
+              control={control}
+              name='new_password'
+              render={({ field: {onChange, value}}) => (
+                <Input
+                placeholder='New password'
+                bg='gray.600'
+                secureTextEntry
+                onChangeText={onChange}
+                value={value}
+                errorMessage={errors.new_password?.message}
+                />
+              )}
               />
-              <Input
-              placeholder='New password'
-              bg='gray.600'
-              secureTextEntry
+              
+              <Controller
+              control={control}
+              name='confirm_new_password'
+              render={({ field: {onChange, value}}) => (
+                <Input
+                placeholder='Confirm new password'
+                bg='gray.600'
+                secureTextEntry
+                onChangeText={onChange}
+                value={value}
+                errorMessage={errors.confirm_new_password?.message}
+                />
+              )}
               />
-              <Input
-              placeholder='Confirm new password'
-              bg='gray.600'
-              secureTextEntry
-              />
+
             </VStack>
 
-            <SubmitButton name='Submit' mt={4}/>
+            <SubmitButton name='Submit' mt={4} onPress={handleSubmit(handleChangeInfo)}/>
           </Center>
         </ScrollView>
     </VStack>
