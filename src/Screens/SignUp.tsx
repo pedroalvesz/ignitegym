@@ -11,14 +11,14 @@ import * as yup from 'yup'
 import {yupResolver} from '@hookform/resolvers/yup'
 
 type SignUpProps = {
-  username: string,
+  name: string,
   email: string,
   password: string,
   password_confirm: string,
 }
 
 const SignUpSchema = yup.object({
-  username: yup.string().required('Insert your Username.'),
+  name: yup.string().required('Insert your Name.'),
   email: yup.string().required('Insert your Email.').email('Invalid Email.'),
   password: yup.string().required('Insert your Password').min(8, 'Your password must have at least 8 characters.'),
   password_confirm: yup.string().required('Confirm your password').oneOf([yup.ref('password'), null], 'Your passwords are not the same.')
@@ -35,8 +35,15 @@ export function SignUp() {
     navigation.goBack()
   }
 
-  function handleSignUp( data : SignUpProps) {
-    console.log(data)
+  function handleSignUp( { name, email, password } : SignUpProps) {
+    fetch('http://192.168.0.179:3333/users', {
+      method: 'POST',
+      headers: {
+        'Accept' : 'application/json',
+        'Content-Type' : 'application/json',
+      },
+      body: JSON.stringify({ name, email, password })
+    });
   }
 
   return(
@@ -62,15 +69,15 @@ export function SignUp() {
 
 
           <Controller
-          name='username'
+          name='name'
           control={control}
           render={({ field : { onChange, value} }) => (
             <Input 
-            placeholder='Username'
+            placeholder='Name'
             autoCapitalize='none'
             onChangeText={onChange}
             value={value}
-            errorMessage={errors.username?.message}
+            errorMessage={errors.name?.message}
             />
             )}
           />
