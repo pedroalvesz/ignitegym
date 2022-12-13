@@ -1,6 +1,5 @@
 import { Center, Heading } from 'native-base'
 
-
 type ScreenHeaderProps = {
   name: string
 }

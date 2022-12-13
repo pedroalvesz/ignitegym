@@ -1,7 +1,6 @@
 import { Heading, HStack, Icon, Image, Text, VStack } from 'native-base'
-
-import { AntDesign } from '@expo/vector-icons'
 import { TouchableOpacity, TouchableOpacityProps } from 'react-native'
+import { AntDesign } from '@expo/vector-icons'
 
 
 type CardProps = TouchableOpacityProps & {

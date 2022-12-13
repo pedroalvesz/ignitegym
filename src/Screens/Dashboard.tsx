@@ -27,7 +27,6 @@ export function Dashboard() {
     <VStack flex={1}>
       <HomeHeader/>
 
-
       <FlatList
       data={groups}
       keyExtractor={item => item}
@@ -47,25 +46,24 @@ export function Dashboard() {
       />
 
       <VStack flex={1} px={8}>
+        <HStack justifyContent='space-between'>
+          <Heading fontFamily='heading' fontSize='md' color='gray.200'>
+            Exercises
+          </Heading>
 
-      <HStack justifyContent='space-between'>
-        <Heading fontFamily='heading' fontSize='md' color='gray.200'>
-          Exercises
-        </Heading>
-        <Text fontFamily='body' fontSize='sm' color='gray.200'>
-          {exercises.length}
-        </Text>
-      </HStack>
+          <Text fontFamily='body' fontSize='sm' color='gray.200'>
+            {exercises.length}
+          </Text>
+        </HStack>
 
-      <FlatList
-      data={exercises}
-      keyExtractor={item => item}
-      renderItem={({item}) => <ExerciseCard name={item} onPress={handleShowExerciseDetail} />}
-      showsVerticalScrollIndicator={false}
-      _contentContainerStyle={{ paddingBottom: 20 }}
-      mt={3}
-      />
-
+        <FlatList
+        data={exercises}
+        keyExtractor={item => item}
+        renderItem={({item}) => <ExerciseCard name={item} onPress={handleShowExerciseDetail} />}
+        showsVerticalScrollIndicator={false}
+        _contentContainerStyle={{ paddingBottom: 20 }}
+        mt={3}
+        />
       </VStack>
     </VStack>
   )

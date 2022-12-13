@@ -1,7 +1,5 @@
 import { Image, VStack, IImageProps } from 'native-base'
 
-
-
 type userPhotoProps = IImageProps & {
   image: string;
   size: number;

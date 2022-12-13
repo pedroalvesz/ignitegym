@@ -2,10 +2,10 @@ import {VStack, Image, Center, Text, Heading, ScrollView} from 'native-base'
 import { useNavigation } from '@react-navigation/native'
 import { useForm, Controller } from 'react-hook-form'
 
-import BackgroundImg from '@assets/background.png'
-import LogoSvg from '@assets/logo.svg'
 import { Input } from '@components/Input'
 import { SubmitButton } from '@components/SubmitButton'
+import BackgroundImg from '@assets/background.png'
+import LogoSvg from '@assets/logo.svg'
 
 import * as yup from 'yup'
 import {yupResolver} from '@hookform/resolvers/yup'

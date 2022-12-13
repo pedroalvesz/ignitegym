@@ -1,6 +1,5 @@
 import { Heading, HStack, Icon, Text, VStack } from 'native-base'
 import { TouchableOpacity, TouchableOpacityProps} from 'react-native'
-
 import { Feather } from '@expo/vector-icons'
 
 import BodySvg from '@assets/body.svg'

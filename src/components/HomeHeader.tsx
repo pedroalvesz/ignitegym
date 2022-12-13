@@ -1,5 +1,6 @@
-import { Heading, HStack, Icon, IconButton, Image, Text, VStack } from 'native-base'
+import { Heading, HStack, Icon, IconButton, Text, VStack } from 'native-base'
 import {MaterialIcons} from '@expo/vector-icons'
+
 import { UserPhoto } from './UserPhoto'
 
 

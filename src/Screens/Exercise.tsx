@@ -1,11 +1,11 @@
 import { HStack, Image, ScrollView, Text, VStack } from 'native-base'
+import { useNavigation } from '@react-navigation/native'
+
 import { ExerciseHeader } from '@components/ExerciseHeader'
 import { SubmitButton } from '@components/SubmitButton'
 
-
 import SetsSvg from '@assets/series.svg'
 import RepsSvg from '@assets/repetitions.svg'
-import { useNavigation } from '@react-navigation/native'
 
 export function Exercise() {
 
