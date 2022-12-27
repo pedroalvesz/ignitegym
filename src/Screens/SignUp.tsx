@@ -1,4 +1,4 @@
-import {VStack, Image, Center, Text, Heading, ScrollView} from 'native-base'
+import {VStack, Image, Center, Text, Heading, ScrollView, useToast} from 'native-base'
 import { useNavigation } from '@react-navigation/native'
 import { useForm, Controller } from 'react-hook-form'
 import axios from 'axios'
@@ -11,6 +11,7 @@ import { api } from '@services/api'
 
 import * as yup from 'yup'
 import {yupResolver} from '@hookform/resolvers/yup'
+import { AppError } from '@utils/AppError'
 
 type SignUpProps = {
   name: string,
@@ -29,6 +30,7 @@ const SignUpSchema = yup.object({
 export function SignUp() {
 
   const navigation = useNavigation()
+  const toast = useToast()
   const { control, handleSubmit, formState: {errors}} = useForm<SignUpProps>({
     resolver: yupResolver(SignUpSchema)
   })
@@ -38,14 +40,19 @@ export function SignUp() {
   }
 
   async function handleSignUp( { name, email, password } : SignUpProps) {
-
     try {
       const response = await api.post('/users', { name, email, password }) 
     } catch (error) {
-      
-      if(axios.isAxiosError(error)) {
-        console.log(error.response?.data)
-      }
+
+      const isAppError = error instanceof AppError
+      const title = isAppError ? error.message : 'Server Error. Please try again later.'
+
+      toast.show({
+        title,
+        placement: 'top',
+        bg: 'red.500',
+        mx: 4,
+      })
     }
   }
 
