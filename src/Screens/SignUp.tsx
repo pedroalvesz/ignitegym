@@ -1,11 +1,13 @@
 import {VStack, Image, Center, Text, Heading, ScrollView} from 'native-base'
 import { useNavigation } from '@react-navigation/native'
 import { useForm, Controller } from 'react-hook-form'
+import axios from 'axios'
 
 import { Input } from '@components/Input'
 import { SubmitButton } from '@components/SubmitButton'
 import BackgroundImg from '@assets/background.png'
 import LogoSvg from '@assets/logo.svg'
+import { api } from '@services/api'
 
 import * as yup from 'yup'
 import {yupResolver} from '@hookform/resolvers/yup'
@@ -35,15 +37,16 @@ export function SignUp() {
     navigation.goBack()
   }
 
-  function handleSignUp( { name, email, password } : SignUpProps) {
-    fetch('http://192.168.0.179:3333/users', {
-      method: 'POST',
-      headers: {
-        'Accept' : 'application/json',
-        'Content-Type' : 'application/json',
-      },
-      body: JSON.stringify({ name, email, password })
-    });
+  async function handleSignUp( { name, email, password } : SignUpProps) {
+
+    try {
+      const response = await api.post('/users', { name, email, password }) 
+    } catch (error) {
+      
+      if(axios.isAxiosError(error)) {
+        console.log(error.response?.data)
+      }
+    }
   }
 
   return(
