@@ -1,16 +1,20 @@
-import {VStack, Image, Center, Text, Heading, ScrollView} from 'native-base'
+import {VStack, Image, Center, Text, Heading, ScrollView, useToast} from 'native-base'
 import { useNavigation } from '@react-navigation/native'
 import { useForm, Controller } from 'react-hook-form' 
 
-import { SubmitButton } from '@components/SubmitButton'
-import { Input } from '@components/Input'
 import BackgroundImg from '@assets/background.png'
 import LogoSvg from '@assets/logo.svg'
 
+import { SubmitButton } from '@components/SubmitButton'
+import { Input } from '@components/Input'
+
 import { AuthRoutesNavigationProps } from '@routes/auth.routes'
+import { useAuth } from '@hooks/useAuth'
 
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { AppError } from '@utils/AppError'
+import { useState } from 'react'
 
 
 type SignInProps = {
@@ -32,12 +36,32 @@ export function SignIn() {
     resolver: yupResolver(SignInSchema)
   })
 
+  const { signIn } = useAuth()
+  const toast = useToast()
+  const [isLoading, setIsLoading] = useState(false)
+
   function handleNewAccount() {
     navigation.navigate('signUp')
   }
 
-  function handleSignIn(data: SignInProps) {
-    console.log(data)
+  async function handleSignIn({email, password} : SignInProps) {
+    try {
+    setIsLoading(true)
+    await signIn(email, password)
+
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError ? error.message : 'Server Error. Please try again later.'
+      
+      setIsLoading(false)
+
+      toast.show({
+        title,
+        placement: 'top',
+        bg: 'red.500',
+      })
+
+    }
   }
 
   return(
@@ -65,13 +89,12 @@ export function SignIn() {
           <Controller
           name='email'
           control={control}
-          render={({ field : {onChange, value}}) => (
+          render={({ field : { onChange }}) => (
             <Input 
             placeholder='E-mail'
             keyboardType='email-address'
             autoCapitalize='none'
             onChangeText={onChange}
-            value={value}
             errorMessage={errors.email?.message}
             />
           )}
@@ -81,20 +104,19 @@ export function SignIn() {
           <Controller
           name='password'
           control={control}
-          render={({ field : { onChange, value }}) => (
+          render={({ field : { onChange }}) => (
             <Input
             placeholder='Password'
             autoCapitalize='none'
             secureTextEntry
             onChangeText={onChange}
-            value={value}
             errorMessage={errors.password?.message}
             />
           )}
           />
           
           
-          <SubmitButton name='Login' mb="112" onPress={handleSubmit(handleSignIn)}/>
+          <SubmitButton name='Login' mb="112" onPress={handleSubmit(handleSignIn)} isLoading={isLoading}/>
 
           <Text mb="3" fontFamily='body' color='gray.100' fontSize='md'>
             Not registered yet ?

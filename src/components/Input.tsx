@@ -9,6 +9,7 @@ type InputProps = IInputProps & {
 
 export function Input({errorMessage, isInvalid, ...rest} : InputProps) {
 
+  // operador que transforma variavel em booleano
   const invalid = !!errorMessage || isInvalid
 
 return(
