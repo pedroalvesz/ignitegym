@@ -9,6 +9,7 @@ import {
 import { Loading } from '@components/Loading';
 import { theme } from './styles/theme';
 import { Routes } from '@routes/index';
+import { AuthContext, AuthContextProvider } from '@contexts/AuthContext';
 
 export default function App() {
 
@@ -20,7 +21,9 @@ export default function App() {
       barStyle={'light-content'}
       translucent
       />
-      {fontsLoaded ? <Routes/> : <Loading/>}
+      <AuthContextProvider>
+        {fontsLoaded ? <Routes/> : <Loading/>}
+      </AuthContextProvider>
     </NativeBaseProvider>
   );
 }
