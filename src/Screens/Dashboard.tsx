@@ -14,7 +14,6 @@ export function Dashboard() {
 
   const [groups, setGroups] = useState(['Chest', 'Back', 'Biceps', 'Triceps', 'Shoulders', 'Legs']);
   const [selectedGroup, setSelectedGroup] = useState('Chest');
-
   const [exercises, setExercises] = useState(['Pull Down', 'Deadlift', 'Lat-Pull Dowm', 'Pull Up'])
 
   const { navigate } = useNavigation<AppRoutesNavigationProps>()

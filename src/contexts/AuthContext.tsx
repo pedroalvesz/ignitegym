@@ -2,11 +2,12 @@ import { createContext, ReactNode, useEffect, useState } from 'react';
 
 import { api } from '@services/api';
 import { userDTO } from '@dtos/userDTO';
-import { StorageUserSave, StorageUserGet } from '@storage/storageUser';
+import { StorageUserSave, StorageUserGet, StorageUserRemove } from '@storage/storageUser';
 
 export type AuthContextDataProps = {
   user: userDTO;
   signIn: ( email: string, password: string ) => Promise<void>;
+  signOut: () => Promise<void>;
   LoadingUserData: boolean;
 }
 
@@ -24,6 +25,8 @@ export function AuthContextProvider({children} : AuthContextProviderProps ) {
   const [user, setUser] = useState({} as userDTO);
   const [LoadingUserData, setLoadingUserData] = useState(true)
 
+
+
    async function signIn(email: string, password: string) {
     try {
       const { data } = await api.post('/sessions', {email, password})
@@ -36,6 +39,18 @@ export function AuthContextProvider({children} : AuthContextProviderProps ) {
     } catch (error) {
       //throw joga (o erro) no local onde está sendo chamada a função
       throw error
+    }
+  }
+
+  async function signOut() {
+    setLoadingUserData(true)
+    try {
+      setUser({} as userDTO)
+      await StorageUserRemove()
+    } catch (error) {
+      throw error
+    } finally {
+      setLoadingUserData(false)
     }
   }
 
@@ -59,7 +74,7 @@ export function AuthContextProvider({children} : AuthContextProviderProps ) {
   },[])
 
   return(
-    <AuthContext.Provider value={{ user, signIn, LoadingUserData }}>
+    <AuthContext.Provider value={{ user, signIn, signOut, LoadingUserData }}>
       {children}
     </AuthContext.Provider>
   )
