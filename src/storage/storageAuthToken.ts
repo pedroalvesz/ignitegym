@@ -11,3 +11,7 @@ export async function StorageTokenGet() {
 
   return token;
 }
+
+export async function StorageTokenRemove() {
+  await AsyncStorage.removeItem(AUTH_TOKEN_STORAGE)
+}

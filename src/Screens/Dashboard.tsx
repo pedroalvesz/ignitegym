@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { FlatList, Heading, HStack, Text, VStack } from 'native-base';
-import { useNavigation } from '@react-navigation/native'
+import { useCallback, useEffect, useState } from 'react';
+import { FlatList, Heading, HStack, Text, useToast, VStack } from 'native-base';
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 
 import { Group } from '@components/Group';
 import { HomeHeader } from '@components/HomeHeader';
@@ -8,19 +8,56 @@ import { ExerciseCard } from '@components/ExerciseCard';
 
 import { AppRoutesNavigationProps } from '@routes/app.routes';
 
+import { api } from '@services/api'
+import { AppError } from '@utils/AppError';
+import { exerciseDTO } from '@dtos/exerciseDTO';
+
 
 
 export function Dashboard() {
 
-  const [groups, setGroups] = useState(['Chest', 'Back', 'Biceps', 'Triceps', 'Shoulders', 'Legs']);
-  const [selectedGroup, setSelectedGroup] = useState('Chest');
-  const [exercises, setExercises] = useState(['Pull Down', 'Deadlift', 'Lat-Pull Dowm', 'Pull Up'])
+  const [groups, setGroups] = useState<string[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState('antebraço');
+  const [exercises, setExercises] = useState<exerciseDTO[]>([])
 
   const { navigate } = useNavigation<AppRoutesNavigationProps>()
+  const toast = useToast()
 
   function handleShowExerciseDetail() {
     navigate('exercise')
   }
+
+  async function fetchGroups() {
+    const { data } = await api.get('/groups')
+    setGroups(data)
+  }
+
+  async function fetchExercises() {
+    try {
+      const { data } = await api.get(`/exercises/bygroup/${selectedGroup}`)
+      setExercises(data)
+
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError ? error.message : 'Unable to load exercises.'
+
+      toast.show({
+        title,
+        placement: 'top',
+        bg: 'red.500',
+        mx: 4,
+      })
+    }
+  }
+
+  useEffect(() => {
+    fetchGroups()
+  }, [])
+
+  //Focus Effect executa novamente quando volta para a tela
+  useFocusEffect(useCallback(() => {
+    fetchExercises()
+  },[selectedGroup]))
 
   return(
     <VStack flex={1}>
@@ -57,8 +94,8 @@ export function Dashboard() {
 
         <FlatList
         data={exercises}
-        keyExtractor={item => item}
-        renderItem={({item}) => <ExerciseCard name={item} onPress={handleShowExerciseDetail} />}
+        keyExtractor={item => item.id}
+        renderItem={({item}) => <ExerciseCard name={item.name} onPress={handleShowExerciseDetail} />}
         showsVerticalScrollIndicator={false}
         _contentContainerStyle={{ paddingBottom: 20 }}
         mt={3}

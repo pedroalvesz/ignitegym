@@ -3,7 +3,8 @@ import { createContext, ReactNode, useEffect, useState } from 'react';
 import { api } from '@services/api';
 import { userDTO } from '@dtos/userDTO';
 import { StorageUserSave, StorageUserGet, StorageUserRemove } from '@storage/storageUser';
-import { StorageTokenGet, StorageTokenSave } from '@storage/storageAuthToken'
+import { StorageTokenGet, StorageTokenRemove, StorageTokenSave } from '@storage/storageAuthToken'
+import { boolean } from 'yup';
 
 export type AuthContextDataProps = {
   user: userDTO;
@@ -24,20 +25,14 @@ export const AuthContext = createContext<AuthContextDataProps>({} as AuthContext
 export function AuthContextProvider({children} : AuthContextProviderProps ) {
 
   const [user, setUser] = useState({} as userDTO);
-  const [LoadingUserData, setLoadingUserData] = useState(true)
+  const [LoadingUserData, setLoadingUserData] = useState(Boolean)
 
   
 
   async function userAndTokenUpdate(userData: userDTO, token: string) {
-    try {
       //Definindo que iremos anexar o token em todas as requisições
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`
-
       setUser(userData)
-
-    } catch (error) {
-      throw error
-    }
   }
 
    async function signIn(email: string, password: string) {
@@ -66,6 +61,7 @@ export function AuthContextProvider({children} : AuthContextProviderProps ) {
 
       setUser({} as userDTO)
       await StorageUserRemove()
+      await StorageTokenRemove()
     } catch (error) {
       throw error
     } finally {
@@ -75,6 +71,8 @@ export function AuthContextProvider({children} : AuthContextProviderProps ) {
 
   async function loadUserData() {
     try {
+      setLoadingUserData(true)
+
       const userLogged = await StorageUserGet()
       const token = await StorageTokenGet()
   
