@@ -1,5 +1,6 @@
-import { HStack, Image, ScrollView, Text, VStack } from 'native-base'
-import { useNavigation } from '@react-navigation/native'
+import { useEffect, useState } from 'react'
+import { HStack, Image, ScrollView, Text, useToast, VStack } from 'native-base'
+import { useNavigation, useRoute } from '@react-navigation/native'
 
 import { ExerciseHeader } from '@components/ExerciseHeader'
 import { SubmitButton } from '@components/SubmitButton'
@@ -7,24 +8,61 @@ import { SubmitButton } from '@components/SubmitButton'
 import SetsSvg from '@assets/series.svg'
 import RepsSvg from '@assets/repetitions.svg'
 
+import { api } from '@services/api'
+import { AppError } from '@utils/AppError'
+import { exerciseDTO } from '@dtos/exerciseDTO'
+
+type RouteParamsProps = {
+  exerciseId: string;
+}
+
 export function Exercise() {
 
-  const {goBack} = useNavigation()
+  const [exercise, setExercise] = useState<exerciseDTO>({} as exerciseDTO)
+
+  const route = useRoute()
+  const { exerciseId } = route.params as RouteParamsProps;
+  const { goBack } = useNavigation()
+
+  const toast = useToast()
 
   function handleGoBack() {
     goBack()
   }
 
+  async function getExerciseDetails() {
+    try {
+      const { data } = await api.get(`/exercises/${exerciseId}`)
+      setExercise(data)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError ? error.message : 'Unable to load exercise details.'
+
+      toast.show({
+        title,
+        placement: 'top',
+        bg: 'red.500',
+        mx: 4,
+      })
+    }
+  }
+
+  useEffect(() => {
+    getExerciseDetails()
+  }, [exerciseId])
+
   return(
     <VStack flex={1}>
       <ExerciseHeader
+      name={exercise.name}
+      group={exercise.group}
       onPress={handleGoBack}
       />
 
       <ScrollView>
       <VStack flex={1} p={8}>
         <Image
-        source={{uri: 'https://fortissima.com.br/wp-content/uploads/2016/04/remada-curvada-doutissima-istock.jpg'}}
+        source={{uri: `${api.defaults.baseURL}/exercise/demo/${exercise.demo}`}}
         alt='Exercise Detail Photo'
         rounded='lg'
         resizeMode='cover'
@@ -38,7 +76,7 @@ export function Exercise() {
           <HStack>
             <SetsSvg/>
             <Text fontFamily='body' fontSize='md' color='gray.100' ml={2}>
-              3 Sets
+              {exercise.series} Sets
             </Text>
     
           </HStack>
@@ -46,7 +84,7 @@ export function Exercise() {
           <HStack>
             <RepsSvg/>
             <Text fontFamily='body' fontSize='md' color='gray.100' ml={2}>
-              12 Repetitions
+              {exercise.repetitions} Repetitions
             </Text>
     
           </HStack>

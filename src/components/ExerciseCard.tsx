@@ -1,13 +1,15 @@
 import { Heading, HStack, Icon, Image, Text, VStack } from 'native-base'
 import { TouchableOpacity, TouchableOpacityProps } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'
+import { exerciseDTO } from '@dtos/exerciseDTO'
+import { api } from '@services/api'
 
 
 type CardProps = TouchableOpacityProps & {
-  name: string;
+  data: exerciseDTO;
 }
 
-export function ExerciseCard({name, ...rest} : CardProps) {
+export function ExerciseCard({data, ...rest} : CardProps) {
   return(
     <TouchableOpacity {...rest}>
       <HStack
@@ -21,19 +23,19 @@ export function ExerciseCard({name, ...rest} : CardProps) {
       rounded='lg'
       >
         <Image
-        source={{uri : 'https://fortissima.com.br/wp-content/uploads/2016/04/remada-curvada-doutissima-istock.jpg'}}
+        source={{uri : `${api.defaults.baseURL}/exercise/thumb/${data.thumb}`}}
         w={16}
         h={16}
         rounded='md'
-        alt='exercise photo'
+        alt={data.name}
         />
 
         <VStack ml={4} flex={1}>
           <Heading fontFamily='heading' fontSize='lg' color='white'>
-            {name}
+            {data.name}
           </Heading>
           <Text fontFamily='body' fontSize='sm' color='gray.200' numberOfLines={1}>
-            3x12
+            {data.series} series x {data.repetitions} repetitions
           </Text>
         </VStack>
 
