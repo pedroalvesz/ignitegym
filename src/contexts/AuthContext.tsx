@@ -3,6 +3,7 @@ import { createContext, ReactNode, useEffect, useState } from 'react';
 import { api } from '@services/api';
 import { userDTO } from '@dtos/userDTO';
 import { StorageUserSave, StorageUserGet, StorageUserRemove } from '@storage/storageUser';
+import { StorageTokenGet, StorageTokenSave } from '@storage/storageAuthToken'
 
 export type AuthContextDataProps = {
   user: userDTO;
@@ -25,26 +26,44 @@ export function AuthContextProvider({children} : AuthContextProviderProps ) {
   const [user, setUser] = useState({} as userDTO);
   const [LoadingUserData, setLoadingUserData] = useState(true)
 
+  
 
+  async function userAndTokenUpdate(userData: userDTO, token: string) {
+    try {
+      //Definindo que iremos anexar o token em todas as requisições
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`
+
+      setUser(userData)
+
+    } catch (error) {
+      throw error
+    }
+  }
 
    async function signIn(email: string, password: string) {
     try {
       const { data } = await api.post('/sessions', {email, password})
       
-      if(data.user) {
-        setUser(data.user)
-        StorageUserSave(data.user)
-      }
+      if(data.user && data.token) {
+        setLoadingUserData(true)
 
+        await StorageUserSave(data.user)
+        await StorageTokenSave(data.token)
+
+        userAndTokenUpdate(data.user, data.token)
+      }
     } catch (error) {
       //throw joga (o erro) no local onde está sendo chamada a função
       throw error
+    } finally {
+      setLoadingUserData(false)
     }
   }
 
   async function signOut() {
-    setLoadingUserData(true)
     try {
+      setLoadingUserData(true)
+
       setUser({} as userDTO)
       await StorageUserRemove()
     } catch (error) {
@@ -54,13 +73,13 @@ export function AuthContextProvider({children} : AuthContextProviderProps ) {
     }
   }
 
-  async function LoadUserData() {
+  async function loadUserData() {
     try {
       const userLogged = await StorageUserGet()
-      console.log(userLogged)
+      const token = await StorageTokenGet()
   
-      if(userLogged) {
-        setUser(userLogged)
+      if(userLogged && token) {
+        userAndTokenUpdate(userLogged, token)
       }
     } catch (error) {
       throw error
@@ -70,7 +89,7 @@ export function AuthContextProvider({children} : AuthContextProviderProps ) {
   }
 
   useEffect(() => {
-    LoadUserData()
+    loadUserData()
   },[])
 
   return(
