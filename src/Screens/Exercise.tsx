@@ -11,6 +11,7 @@ import RepsSvg from '@assets/repetitions.svg'
 import { api } from '@services/api'
 import { AppError } from '@utils/AppError'
 import { exerciseDTO } from '@dtos/exerciseDTO'
+import { Loading } from '@components/Loading'
 
 type RouteParamsProps = {
   exerciseId: string;
@@ -19,6 +20,7 @@ type RouteParamsProps = {
 export function Exercise() {
 
   const [exercise, setExercise] = useState<exerciseDTO>({} as exerciseDTO)
+  const [isLoading, setIsLoading] = useState(true)
 
   const route = useRoute()
   const { exerciseId } = route.params as RouteParamsProps;
@@ -44,6 +46,8 @@ export function Exercise() {
         bg: 'red.500',
         mx: 4,
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -53,49 +57,59 @@ export function Exercise() {
 
   return(
     <VStack flex={1}>
-      <ExerciseHeader
-      name={exercise.name}
-      group={exercise.group}
-      onPress={handleGoBack}
-      />
-
-      <ScrollView>
-      <VStack flex={1} p={8}>
-        <Image
-        source={{uri: `${api.defaults.baseURL}/exercise/demo/${exercise.demo}`}}
-        alt='Exercise Detail Photo'
-        rounded='lg'
-        resizeMode='cover'
-        w='full'
-        h={80}
+      {isLoading
+      ?
+      <Loading/>
+      :
+      <>
+        <ExerciseHeader
+        name={exercise.name}
+        group={exercise.group}
+        onPress={handleGoBack}
         />
 
-        <VStack bg='gray.600' rounded='lg' mt={3} px={4} pt={5} pb={4}>
-          <HStack justifyContent='space-between' px={3} mb={6}>
-
-          <HStack>
-            <SetsSvg/>
-            <Text fontFamily='body' fontSize='md' color='gray.100' ml={2}>
-              {exercise.series} Sets
-            </Text>
-    
-          </HStack>
-
-          <HStack>
-            <RepsSvg/>
-            <Text fontFamily='body' fontSize='md' color='gray.100' ml={2}>
-              {exercise.repetitions} Repetitions
-            </Text>
-    
-          </HStack>
-          </HStack>
-
-          <SubmitButton
-          name='Register as done'
+        <ScrollView>
+        <VStack flex={1} p={8}>
+          <Image
+          //REINSTALAR O BECKEND PRA VER SE RESOLVE & MEXER COM O ASYNC STORAGE NA POKE API COM UMA TELA DE TIME POKEMON
+          //VOU FAVORITAR O POKEMON PELO ID, TODA VEZ QUE ABRIR O APP, ELE VAI PUXAR OS IDS FAVORITADOS E NA TELA DE PERFIL VAI FAZER UMA VERIFICAÇÃO SE O ID DO POKEMON ESTÁ NO ARRAY DE IDS FAVORITADOS
+          // NA TELA DE POKE FAVORITADOS VAI EXIBIR OS DADOS DOS POKEMONS PELOS IDS FAV
+          source={{uri: `${api.defaults.baseURL}/exercise/demo/${exercise.demo}`}}
+          alt='Exercise Detail Photo'
+          rounded='lg'
+          resizeMode='cover'
+          w='full'
+          h={80}
           />
+
+          <VStack bg='gray.600' rounded='lg' mt={3} px={4} pt={5} pb={4}>
+            <HStack justifyContent='space-between' px={3} mb={6}>
+
+            <HStack>
+              <SetsSvg/>
+              <Text fontFamily='body' fontSize='md' color='gray.100' ml={2}>
+                {exercise.series} Sets
+              </Text>
+      
+            </HStack>
+
+            <HStack>
+              <RepsSvg/>
+              <Text fontFamily='body' fontSize='md' color='gray.100' ml={2}>
+                {exercise.repetitions} Repetitions
+              </Text>
+      
+            </HStack>
+            </HStack>
+
+            <SubmitButton
+            name='Register as done'
+            />
+          </VStack>
         </VStack>
-      </VStack>
-      </ScrollView>
+        </ScrollView>
+      </>
+      }
     </VStack>
   )
 }
