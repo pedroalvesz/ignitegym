@@ -12,6 +12,7 @@ import { api } from '@services/api'
 import { AppError } from '@utils/AppError'
 import { exerciseDTO } from '@dtos/exerciseDTO'
 import { Loading } from '@components/Loading'
+import { AppRoutesNavigationProps } from '@routes/app.routes'
 
 type RouteParamsProps = {
   exerciseId: string;
@@ -19,17 +20,18 @@ type RouteParamsProps = {
 
 export function Exercise() {
 
-  const [exercise, setExercise] = useState<exerciseDTO>({} as exerciseDTO)
+  const [sendingExercise, setSendingExercise] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [exercise, setExercise] = useState<exerciseDTO>({} as exerciseDTO)
 
   const route = useRoute()
   const { exerciseId } = route.params as RouteParamsProps;
-  const { goBack } = useNavigation()
+  const navigation = useNavigation<AppRoutesNavigationProps>()
 
   const toast = useToast()
 
   function handleGoBack() {
-    goBack()
+    navigation.goBack()
   }
 
   async function getExerciseDetails() {
@@ -48,6 +50,35 @@ export function Exercise() {
       })
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  async function handleSetExerciseAsDone() {
+    try {
+      setSendingExercise(true)
+      await api.post('/history', {exercise_id : exerciseId})
+
+      toast.show({
+        title: 'Exercise registered on your history.',
+        placement: 'top',
+        bg: 'green.700',
+        mx: 4,
+      })
+
+      navigation.navigate('history')
+
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError ? error.message : 'Unable to load exercise details.'
+
+      toast.show({
+        title,
+        placement: 'top',
+        bg: 'red.500',
+        mx: 4,
+      })
+    } finally {
+      setSendingExercise(false)
     }
   }
 
@@ -104,6 +135,8 @@ export function Exercise() {
 
             <SubmitButton
             name='Register as done'
+            isLoading={sendingExercise}
+            onPress={handleSetExerciseAsDone}
             />
           </VStack>
         </VStack>

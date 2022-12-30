@@ -4,7 +4,6 @@ import { api } from '@services/api';
 import { userDTO } from '@dtos/userDTO';
 import { StorageUserSave, StorageUserGet, StorageUserRemove } from '@storage/storageUser';
 import { StorageTokenGet, StorageTokenRemove, StorageTokenSave } from '@storage/storageAuthToken'
-import { boolean } from 'yup';
 
 export type AuthContextDataProps = {
   user: userDTO;
