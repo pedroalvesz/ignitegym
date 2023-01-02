@@ -8,6 +8,8 @@ import { ScreenHeader } from '@components/ScreenHeader';
 import { SubmitButton } from '@components/SubmitButton';
 import { UserPhoto } from '@components/UserPhoto';
 
+import DefaultUserPhoto from '../assets/userPhotoDefault.png'
+
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 
@@ -140,7 +142,35 @@ export function Profile() {
           })
         }
 
-        setUserPhoto(PhotoSelected.assets[0].uri);
+        const photoExtension = PhotoSelected.assets[0].uri.split('.').pop()
+        const photoFile = {
+          name: `${user.name}.${photoExtension}`,
+          uri: PhotoSelected.assets[0].uri,
+          type: `${PhotoSelected.assets[0].type}/${photoExtension}`,
+        } as any;
+
+        const userPhotoUploadForm = new FormData()
+        //criando a chave o valor da chave a ser enviada
+        userPhotoUploadForm.append('avatar', photoFile)
+
+        const response = await api.patch('/users/avatar', userPhotoUploadForm, {
+          headers: {
+            'Content-Type' : 'multipart/form-data'
+          }
+          // definido que o conteudo é form data
+        })
+
+        const updatedUser = user;
+        updatedUser.avatar = response.data.avatar;
+        console.log(updatedUser)
+        updateUserProfile(updatedUser)
+
+        toast.show({
+          title: 'Profile Photo successfully updated!',
+          placement: 'top',
+          bg: 'green.500',
+          mx: 4,
+        })
       }
     } catch(error) {
       console.log(error);
@@ -169,7 +199,10 @@ export function Profile() {
           />
           :
           <UserPhoto
-          source={{uri : userPhoto}}
+          source={
+            user.avatar 
+            ? {uri : `${api.defaults.baseURL}/avatar/${user.avatar}`} 
+            : DefaultUserPhoto}
           size={PHOTO_SIZE}
           alt='Profile Screen User Photo'
           />
