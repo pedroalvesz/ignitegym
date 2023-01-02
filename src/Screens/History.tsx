@@ -1,21 +1,43 @@
-import { useState } from 'react'
-import { Heading, VStack, SectionList, Text} from 'native-base'
+import { useCallback, useEffect, useState } from 'react'
+import { Heading, VStack, SectionList, Text, useToast} from 'native-base'
 
 import { ScreenHeader } from '@components/ScreenHeader'
 import { HistoryCard } from '@components/HistoryCard'
+import { api } from '@services/api'
+import { useFocusEffect } from '@react-navigation/native'
+import { AppError } from '@utils/AppError'
+import { historySectionDTO } from '@dtos/historySectionDTO'
 
 export function History() {
 
-  const [exercisesDone, setExercisesDone] = useState([
-    {
-      title: '30.11.2022',
-      data: ['Pull Down', 'Pull Up']
-    },
-    {
-      title: '29.11.2022',
-      data: ['Bench Press',]
+  const [isLoading, setIsLoading] = useState(true)
+  const [exercisesDone, setExercisesDone] = useState<historySectionDTO[]>([])
+
+  const toast = useToast()
+
+  async function fetchHistory() {
+    try {
+      const response = await api.get('/history')
+
+      setExercisesDone(response.data)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError ? error.message : 'Unable to load your history.'
+
+      toast.show({
+        title,
+        placement: 'top',
+        bg: 'red.500',
+        mx: 4,
+      })
+    } finally {
+      setIsLoading(false)
     }
-  ])
+  }
+
+  useFocusEffect(useCallback(() => {
+    fetchHistory()
+  },[]))
 
   return(
     <VStack flex={1}>
@@ -24,9 +46,9 @@ export function History() {
       <VStack flex={1} px={8}>
         <SectionList
         sections={exercisesDone}
-        keyExtractor={item => item}
+        keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <HistoryCard/>
+          <HistoryCard name={item.name} group={item.group} hour={item.hour}/>
         )}
 
         renderSectionHeader={({ section }) => (

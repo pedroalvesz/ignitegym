@@ -7,6 +7,7 @@ import { StorageTokenGet, StorageTokenRemove, StorageTokenSave } from '@storage/
 
 export type AuthContextDataProps = {
   user: userDTO;
+  updateUserProfile: (updatedUser: userDTO) => Promise<void>;
   signIn: ( email: string, password: string ) => Promise<void>;
   signOut: () => Promise<void>;
   LoadingUserData: boolean;
@@ -26,12 +27,20 @@ export function AuthContextProvider({children} : AuthContextProviderProps ) {
   const [user, setUser] = useState({} as userDTO);
   const [LoadingUserData, setLoadingUserData] = useState(Boolean)
 
-  
 
   async function userAndTokenUpdate(userData: userDTO, token: string) {
       //Definindo que iremos anexar o token em todas as requisições
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`
       setUser(userData)
+  }
+
+  async function updateUserProfile(updatedUser: userDTO) {
+    try {
+      setUser(updatedUser)
+      await StorageUserSave(updatedUser)
+    } catch (error) {
+      throw error
+    }
   }
 
    async function signIn(email: string, password: string) {
@@ -90,7 +99,7 @@ export function AuthContextProvider({children} : AuthContextProviderProps ) {
   },[])
 
   return(
-    <AuthContext.Provider value={{ user, signIn, signOut, LoadingUserData }}>
+    <AuthContext.Provider value={{ user, signIn, signOut, LoadingUserData, updateUserProfile }}>
       {children}
     </AuthContext.Provider>
   )

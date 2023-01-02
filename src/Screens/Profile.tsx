@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
-import { Center, Heading, ScrollView, Skeleton, Text, Toast, useToast, VStack } from 'native-base';
+import { Center, Heading, ScrollView, Skeleton, Text, useToast, VStack } from 'native-base';
 import { useForm, Controller} from 'react-hook-form'
 
 import { Input } from '@components/Input';
@@ -16,44 +16,103 @@ import * as FileSystem from 'expo-file-system';
 
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useAuth } from '@hooks/useAuth';
+import { api } from '@services/api';
+import { AppError } from '@utils/AppError';
 
 type ProfileProps = {
-  username: string,
-  current_password: string,
-  new_password: string,
-  confirm_new_password: string,
+  name: string;
+  email: string;
+  old_password: string;
+  password: string;
+  confirm_password: string;
 }
 
 const ProfileSchema = yup.object({
-  username: yup.string().required('Insert your new Username.'),
-  current_password: yup.string().required('Insert your current password.'),
-  new_password: yup.string().required('Insert a new password.'),
-  confirm_new_password: yup.string().required('Confirm your new password.'),
+  name: yup
+    .string()
+    .required('Insert your new Username.'),
+  password: yup
+    .string()
+    .min(8,'Your new password must have at least 8 characters.')
+    .nullable()
+    .transform((value) => !!value ? value : null),
+  confirm_password: yup
+    .string()
+    .oneOf([yup.ref('password'), null], 'Passwords do not match.')
+    .nullable()
+    .transform((value) => !!value ? value : null)
+    .when('password', {
+      is: (Field: any) => Field , //Field !== null && Field !== undefined // Quando a senha for informada (no null no undefined) esse campo e requirido
+      then: yup
+      .string()
+      .nullable()
+      .required('Confirm your new password.')
+      .transform((value) => !!value ? value : null)
+      ,
+    })
 })
 
 const PHOTO_SIZE = 33;
 
+
 export function Profile() {
 
+  const [isUpdating, setIsUpdating] = useState(false)
   const [photoisLoading, setPhotoIsLoading] = useState(false);
+
+  const { user, updateUserProfile } = useAuth()
 
   const [userPhoto, setUserPhoto] = useState('https://github.com/pedroalvesz.png');
 
-  const toast = useToast()
-
   const {control, handleSubmit, formState: { errors }} = useForm<ProfileProps>({
-    resolver: yupResolver(ProfileSchema)
+    resolver: yupResolver(ProfileSchema),
+    defaultValues: {
+      name: user.name,
+      email: user.email,
+    }
   })
 
-  function handleChangeInfo(data : ProfileProps) {
-    console.log(data)
+  const toast = useToast()
+
+
+  async function handleUpdateUser({name, password, old_password} : ProfileProps) {
+    try {
+      setIsUpdating(true)
+
+      const updatedUser = user;
+      updatedUser.name = name;
+
+      await api.put('/users', {name, password, old_password});
+
+      updateUserProfile(updatedUser)
+
+      toast.show({
+        title: 'Profile updated successfully',
+        placement: 'top',
+        bg: 'green.500',
+        mx: 4,
+      })
+
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError ? error.message : 'Unable to load your history.'
+
+      toast.show({
+        title,
+        placement: 'top',
+        bg: 'red.500',
+        mx: 4,
+      })
+    } finally {
+      setIsUpdating(false)
+    }
+
   }
 
   async function handleSelectUserPhoto() {
-    //Tentar reduzir esses if
-    setPhotoIsLoading(true)
-
     try{
+      setPhotoIsLoading(true)
       const PhotoSelected = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         quality: 1,
@@ -83,7 +142,6 @@ export function Profile() {
 
         setUserPhoto(PhotoSelected.assets[0].uri);
       }
-
     } catch(error) {
       console.log(error);
     } finally {
@@ -96,7 +154,7 @@ export function Profile() {
   return(
     <VStack flex={1}>
       <ScreenHeader name='Profile'/>
-        <ScrollView contentContainerStyle={{ paddingBottom: 36}} flex={1} px={8} pt={6}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 72 }} flex={1} px={8} pt={6}>
           <Center>
           {photoisLoading
           ?
@@ -111,7 +169,7 @@ export function Profile() {
           />
           :
           <UserPhoto
-          image={userPhoto}
+          source={{uri : userPhoto}}
           size={PHOTO_SIZE}
           alt='Profile Screen User Photo'
           />
@@ -125,23 +183,30 @@ export function Profile() {
 
             <Controller
             control={control}
-            name='username'
+            name='name'
             render={({field: { onChange, value }}) => (
               <Input
-              placeholder='Name'
+              placeholder='username'
               placeholderTextColor='gray.200'
               bg='gray.600'
               onChangeText={onChange}
               value={value}
-              errorMessage={errors.username?.message}
+              errorMessage={errors.name?.message}
               />
             )}
             />
-            
-            <Input
-            placeholder='E-mail'
-            bg='gray.600'
-            isDisabled
+
+            <Controller
+            control={control}
+            name='email'
+            render={({field: {value}}) => (
+              <Input
+              placeholder='E-mail'
+              value={value}
+              bg='gray.600'
+              isDisabled
+              />
+            )}
             />
             
             <VStack mt={12}>
@@ -151,52 +216,54 @@ export function Profile() {
               
               <Controller
               control={control}
-              name='current_password'
-              render={({ field: {onChange, value}}) => (
+              name='old_password'
+              render={({ field: {onChange}}) => (
                 <Input
                 placeholder='Current password'
                 bg='gray.600'
                 secureTextEntry
                 onChangeText={onChange}
-                value={value}
-                errorMessage={errors.current_password?.message}
+                errorMessage={errors.old_password?.message}
                 />
               )}
               />
 
               <Controller
               control={control}
-              name='new_password'
-              render={({ field: {onChange, value}}) => (
+              name='password'
+              render={({ field: {onChange}}) => (
                 <Input
                 placeholder='New password'
                 bg='gray.600'
                 secureTextEntry
                 onChangeText={onChange}
-                value={value}
-                errorMessage={errors.new_password?.message}
+                errorMessage={errors.password?.message}
                 />
               )}
               />
               
               <Controller
               control={control}
-              name='confirm_new_password'
-              render={({ field: {onChange, value}}) => (
+              name='confirm_password'
+              render={({ field: {onChange}}) => (
                 <Input
                 placeholder='Confirm new password'
                 bg='gray.600'
                 secureTextEntry
                 onChangeText={onChange}
-                value={value}
-                errorMessage={errors.confirm_new_password?.message}
+                errorMessage={errors.confirm_password?.message}
                 />
               )}
               />
 
             </VStack>
 
-            <SubmitButton name='Submit' mt={4} onPress={handleSubmit(handleChangeInfo)}/>
+            <SubmitButton
+            name='Submit'
+            mt={4}
+            onPress={handleSubmit(handleUpdateUser)}
+            isLoading={isUpdating}
+            />
           </Center>
         </ScrollView>
     </VStack>
