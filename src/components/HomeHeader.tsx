@@ -1,11 +1,12 @@
 import { Heading, HStack, Icon, IconButton, Text, VStack } from 'native-base'
 import {MaterialIcons} from '@expo/vector-icons'
 
-import { UserPhoto } from './UserPhoto'
+import { UserPhoto } from '@components/UserPhoto'
 import { useAuth } from '@hooks/useAuth'
 
 import DefaultUserPhoto from '@assets/userPhotoDefault.png'
 import { api } from '@services/api'
+
 
 export function HomeHeader() {
 
@@ -31,11 +32,9 @@ export function HomeHeader() {
             {user.name}
           </Text>
         </VStack>
-      
       </HStack>
 
       <IconButton
-      //importar o icone dentro de um componente icon do NB permite usar o tema
       onPress={signOut}
       icon={<Icon
         as={MaterialIcons}

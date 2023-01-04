@@ -1,11 +1,11 @@
 import { Heading, HStack, Text, VStack } from 'native-base'
 
-
 type HistoryCardProps = {
   name: string;
   group: string;
   hour: string;
 }
+
 
 export function HistoryCard({name, group, hour} : HistoryCardProps) {
   return(

@@ -6,6 +6,7 @@ type GroupProps = IPressableProps & {
   isActive: boolean;
 }
 
+
 export function Group({ name, isActive, ...rest} : GroupProps) {
   return(
     <Pressable
@@ -18,7 +19,6 @@ export function Group({ name, isActive, ...rest} : GroupProps) {
     justifyContent='center'
     alignItems='center'
     overflow='hidden'
-    // No lugar de criar um ternario em cada propriedade, definimos o lugar do pressed pelo is active
     isPressed={isActive}
     _pressed={{
       borderWidth: 1,

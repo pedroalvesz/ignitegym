@@ -14,7 +14,6 @@ export function UserPhoto({size, ...rest} : userPhotoProps) {
       rounded='full'
       borderWidth={2}
       borderColor='gray.500'
-
       {...rest}
       />
     </VStack>

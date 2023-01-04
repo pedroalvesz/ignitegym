@@ -6,7 +6,7 @@ type Props = IButtonProps & {
 }
 
 
-//tipando quais variantes eu estou usando, dizendo que não é obrigatório passar variante, quando não passar vai ser a solid
+//quais variantes eu estou usando, dizendo que não é obrigatório passar variante, quando não passar vai ser a solid
 export function SubmitButton({name, variant = 'solid', ...rest} : Props) {
   return(
     <Button

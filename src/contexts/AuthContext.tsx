@@ -1,9 +1,10 @@
 import { createContext, ReactNode, useEffect, useState } from 'react';
 
-import { api } from '@services/api';
-import { userDTO } from '@dtos/userDTO';
 import { StorageUserSave, StorageUserGet, StorageUserRemove } from '@storage/storageUser';
 import { StorageTokenGet, StorageTokenRemove, StorageTokenSave } from '@storage/storageAuthToken'
+import { userDTO } from '@dtos/userDTO';
+import { api } from '@services/api';
+
 
 export type AuthContextDataProps = {
   user: userDTO;
@@ -15,13 +16,14 @@ export type AuthContextDataProps = {
 
 type AuthContextProviderProps = {
   children: ReactNode;
+  // React component / JSX
 }
 
-//criei o contexto, disse que ele tem a tipagem de authcontextdata props, e começa como um objeto vazio de authcontextdataprops
+//tipagem de authcontextdata props & começa como um objeto vazio de authcontextdataprops
 export const AuthContext = createContext<AuthContextDataProps>({} as AuthContextDataProps)
 
 
-//maneira de criar o componente em outro lugar, não precisando mudar toda a lógica de lugar, somente passando ela como um filho do tipo reactnode (um componente react)
+
 export function AuthContextProvider({children} : AuthContextProviderProps ) {
 
   const [user, setUser] = useState({} as userDTO);
@@ -29,7 +31,7 @@ export function AuthContextProvider({children} : AuthContextProviderProps ) {
 
 
   async function userAndTokenUpdate(userData: userDTO, token: string) {
-      //Definindo que iremos anexar o token em todas as requisições
+      //iremos anexar o token em todas as requisições
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`
       setUser(userData)
   }
@@ -43,7 +45,7 @@ export function AuthContextProvider({children} : AuthContextProviderProps ) {
     }
   }
 
-   async function signIn(email: string, password: string) {
+  async function signIn(email: string, password: string) {
     try {
       const { data } = await api.post('/sessions', {email, password})
       
@@ -56,7 +58,7 @@ export function AuthContextProvider({children} : AuthContextProviderProps ) {
         userAndTokenUpdate(data.user, data.token)
       }
     } catch (error) {
-      //throw joga (o erro) no local onde está sendo chamada a função
+      //jogar o erro no local onde está sendo chamada a função
       throw error
     } finally {
       setLoadingUserData(false)

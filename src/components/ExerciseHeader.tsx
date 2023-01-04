@@ -9,6 +9,7 @@ type ExerciseHeaderProps = TouchableOpacityProps & {
   group: string;
 }
 
+
 export function ExerciseHeader({name, group, ...rest} : ExerciseHeaderProps) {
   return(
     <VStack bg='gray.600' h='148px' px={8} pt={50}>
@@ -33,7 +34,6 @@ export function ExerciseHeader({name, group, ...rest} : ExerciseHeaderProps) {
               {group}
             </Text>
           </HStack>
-
         </HStack>
     </VStack>
   )

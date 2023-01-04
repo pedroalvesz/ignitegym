@@ -4,6 +4,7 @@ type ScreenHeaderProps = {
   name: string
 }
 
+
 export function ScreenHeader({ name } : ScreenHeaderProps) {
   return(
     <Center pt={16} pb={6} bg='gray.600'>

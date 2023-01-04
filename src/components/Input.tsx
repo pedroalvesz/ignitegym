@@ -1,10 +1,8 @@
 import {Input as NativeBaseInput, IInputProps, FormControl} from 'native-base'
 
-//quando for uma propriedade inerente do componente, não é necessário interface tipando os dados que então vindo, somente anexar com o IProps do componente
 type InputProps = IInputProps & {
   errorMessage?: string | null;
 }
-
 
 
 export function Input({errorMessage, isInvalid, ...rest} : InputProps) {

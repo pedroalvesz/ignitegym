@@ -1,6 +1,8 @@
-import { Heading, HStack, Icon, Image, Text, VStack } from 'native-base'
 import { TouchableOpacity, TouchableOpacityProps } from 'react-native'
+import { Heading, HStack, Icon, Image, Text, VStack } from 'native-base'
+
 import { AntDesign } from '@expo/vector-icons'
+
 import { exerciseDTO } from '@dtos/exerciseDTO'
 import { api } from '@services/api'
 
@@ -8,6 +10,7 @@ import { api } from '@services/api'
 type CardProps = TouchableOpacityProps & {
   data: exerciseDTO;
 }
+
 
 export function ExerciseCard({data, ...rest} : CardProps) {
   return(
