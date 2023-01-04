@@ -25,7 +25,7 @@ export function HistoryCard({name, group, hour} : HistoryCardProps) {
         color='white' numberOfLines={1}>
           {group}        
         </Heading>
-        <Text fontFamily='body' fontSize='lg' color='gray.100' pt={1} numberOfLines={1}>
+        <Text fontFamily='body' textTransform='capitalize' fontSize='lg' color='gray.100' pt={1} numberOfLines={1}>
           {name}
         </Text>
       </VStack>

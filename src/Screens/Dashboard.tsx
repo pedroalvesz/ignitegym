@@ -18,7 +18,7 @@ import { Loading } from '@components/Loading';
 export function Dashboard() {
 
   const [groups, setGroups] = useState<string[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState('antebraço');
+  const [selectedGroup, setSelectedGroup] = useState('back');
   const [exercises, setExercises] = useState<exerciseDTO[]>([])
   const [isLoading, setIsLoading] = useState(true)
 

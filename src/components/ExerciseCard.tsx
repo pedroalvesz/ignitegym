@@ -31,7 +31,7 @@ export function ExerciseCard({data, ...rest} : CardProps) {
         />
 
         <VStack ml={4} flex={1}>
-          <Heading fontFamily='heading' fontSize='lg' color='white'>
+          <Heading textTransform='capitalize' fontFamily='heading' fontSize='lg' color='white'>
             {data.name}
           </Heading>
           <Text fontFamily='body' fontSize='sm' color='gray.200' numberOfLines={1}>
