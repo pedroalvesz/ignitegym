@@ -1,10 +1,13 @@
-import { useCallback, useEffect, useState } from 'react'
-import { Heading, VStack, SectionList, Text, useToast} from 'native-base'
+import { useCallback, useState } from 'react'
+import { Heading, VStack, SectionList, Text, useToast, Center} from 'native-base'
+
+import { useFocusEffect } from '@react-navigation/native'
 
 import { ScreenHeader } from '@components/ScreenHeader'
 import { HistoryCard } from '@components/HistoryCard'
+import { Loading } from '@components/Loading'
+
 import { api } from '@services/api'
-import { useFocusEffect } from '@react-navigation/native'
 import { AppError } from '@utils/AppError'
 import { historySectionDTO } from '@dtos/historySectionDTO'
 
@@ -42,8 +45,20 @@ export function History() {
   return(
     <VStack flex={1}>
       <ScreenHeader name="Exercises History"/>
-
       <VStack flex={1} px={8}>
+        {isLoading
+        ?
+        <Loading/>
+        :
+        (exercisesDone.length === 0
+        ?
+        <Center flex={1}>
+          <Text color='gray.200' textAlign='center'>
+            No registered exercises. {'\n'}
+            Let's get your body and mind in shape?
+          </Text>
+        </Center>
+        :
         <SectionList
         sections={exercisesDone}
         keyExtractor={item => item.id}
@@ -59,14 +74,11 @@ export function History() {
         
         // Operador que sempre que a primeira expressão for convertida em true, ele retorna a segunda expressão
         contentContainerStyle={exercisesDone.length === 0 && { flex: 1, justifyContent: 'center'}}
-        ListEmptyComponent={() => (
-          <Text color='gray.200' textAlign='center'>
-            No registered exercises. {'\n'}
-            Let's get our body and mind in shape?
-          </Text>
-        )}
         showsVerticalScrollIndicator={false}
         />
+        )
+        }
+        
       </VStack>
     </VStack>
   )
