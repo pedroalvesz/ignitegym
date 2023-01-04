@@ -1,11 +1,7 @@
 import { useState } from 'react'
-import {VStack, Image, Center, Text, Heading, ScrollView, useToast} from 'native-base'
+import { Platform } from 'react-native'
+import {VStack, Image, Center, Text, Heading, ScrollView, useToast, KeyboardAvoidingView} from 'native-base'
 import { useNavigation } from '@react-navigation/native'
-
-import { useForm, Controller } from 'react-hook-form'
-import * as yup from 'yup'
-import {yupResolver} from '@hookform/resolvers/yup'
-
 
 import { Input } from '@components/Input'
 import { SubmitButton } from '@components/SubmitButton'
@@ -16,6 +12,10 @@ import LogoSvg from '@assets/logo.svg'
 import { api } from '@services/api'
 import { AppError } from '@utils/AppError'
 import { useAuth } from '@hooks/useAuth'
+
+import { useForm, Controller } from 'react-hook-form'
+import * as yup from 'yup'
+import {yupResolver} from '@hookform/resolvers/yup'
 
 
 type SignUpProps = {
@@ -71,8 +71,9 @@ export function SignUp() {
   }
 
   return(
+    <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? 'padding' : 'height'}>
     <ScrollView contentContainerStyle={{ flexGrow: 1}} showsVerticalScrollIndicator={false}>
-      <VStack flex={1} bg="gray.700" pb={16}>
+      <VStack flex={1} bg="gray.700" pb={10}>
         <Image 
         source={BackgroundImg}
         defaultSource={BackgroundImg}
@@ -160,5 +161,6 @@ export function SignUp() {
 
       </VStack>
     </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
